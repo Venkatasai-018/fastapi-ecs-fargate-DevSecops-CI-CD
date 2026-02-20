@@ -1,12 +1,13 @@
-FROM python:3.14
+FROM python:3.12-slim
 
-WORKDIR /fastapi-app
+WORKDIR /app
 
-COPY fastapi-app/requirements.txt /fastapi-app/requirements.txt
+COPY fastapi-app/requirements.txt /app/requirements.txt
 
-RUN pip install --no-cache-dir --upgrade -r /fastapi-app/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
+COPY fastapi-app/ /app/
 
-COPY fastapi-app/main.py /fastapi-app/
+EXPOSE 80
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
