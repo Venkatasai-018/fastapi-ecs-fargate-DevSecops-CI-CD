@@ -55,7 +55,7 @@ jobs:
       with:
         role-to-assume: ${{ secrets.OIDC_CONNECT }}
         role-session-name: GitHubActions-Backend-${{ github.run_id }}
-        aws-region: "ap-south-1"
+        aws-region: "ap-south-2"
     
     # checking the connection with AWS OIDC
     - name: Verify AWS OIDC Authentication
