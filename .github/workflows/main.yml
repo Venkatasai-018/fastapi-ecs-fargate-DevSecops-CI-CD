@@ -90,7 +90,6 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       run: |
         docker tag ${{ env.ImageName }}:latest ${{ env.ECR_REGISTRY}}/${{ env.REPO_NAME }}:latest
-        docker tag ${{ env.ImageName }}:latest ${{ env.ECR_REGISTRY}}"
-        /${{ env.REPO_NAME }}:${{ github.sha }}
+        docker tag ${{ env.ImageName }}:latest ${{ env.ECR_REGISTRY}}/${{ env.REPO_NAME }}:${{ github.sha }}
         docker push ${{ env.ECR_REGISTRY}}/${{ env.REPO_NAME }}:latest
         docker push ${{ env.ECR_REGISTRY }}/${{ env.REPO_NAME }}:${{ github.sha }}
