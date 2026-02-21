@@ -9,7 +9,7 @@ on:
 # OIDC permissions for keyless authentication
 env:
   AWS_REGION: "ap-south-2"
-  ImageName: "fastapi-app"
+  ImageName: "fastapi/app"
   REPO_NAME: "fastapi/app"
 permissions:
   id-token: write
