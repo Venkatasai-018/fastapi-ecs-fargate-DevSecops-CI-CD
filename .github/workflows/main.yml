@@ -2,11 +2,15 @@ name: FastAPI ECR PUSH ECS + FARGATE DEPLOY
 
 on:
   push:
-    branches: [ main, develop, release, feature/fastapi ]
+    branches: [ main ,develop,release]
   workflow_dispatch:  # Allows manual triggering of the workflow from the GitHub Actions tab
 
 
 # OIDC permissions for keyless authentication
+env:
+  AWS_REGION: "ap-south-1"
+  ImageName: "astapi-app"
+  REPO_NAME: "fastapi-app"
 permissions:
   id-token: write
   contents: read
@@ -57,3 +61,11 @@ jobs:
       run: |
         echo "Verifying AWS OIDC Authentication..."
         aws sts get-caller-identity
+    
+    # Build and push Docker image
+    - name: Build and Push Docker Image to ECR
+      run: |
+        
+        # Build the Docker image
+        docker build -t ${{ env.ImageName }}:latest .
+        
