@@ -89,7 +89,9 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       run: |
-        docker tag ${{ env.ImageName }}:latest ${{ env.ECR_REGISTRY}}/${{ env.REPO_NAME }}:latest
-        docker tag ${{ env.ImageName }}:latest ${{ env.ECR_REGISTRY}}/${{ env.REPO_NAME }}:${{ github.sha }}
-        docker push ${{ env.ECR_REGISTRY}}/${{ env.REPO_NAME }}:latest
-        docker push ${{ env.ECR_REGISTRY }}/${{ env.REPO_NAME }}:${{ github.sha }}
+        # docker tag ${{ env.ImageName }}:latest ${{ env.ECR_REGISTRY}}/${{ env.REPO_NAME }}:latest
+        # docker tag ${{ env.ImageName }}:latest ${{ env.ECR_REGISTRY}}/${{ env.REPO_NAME }}:${{ github.sha }}
+        # docker push ${{ env.ECR_REGISTRY}}/${{ env.REPO_NAME }}:latest
+        # docker push ${{ env.ECR_REGISTRY }}/${{ env.REPO_NAME }}:${{ github.sha }}
+        docker tag fastapi/app:latest public.ecr.aws/b6i0w9m5/fastapi/app:latest
+        docker push public.ecr.aws/b6i0w9m5/fastapi/app:latest
