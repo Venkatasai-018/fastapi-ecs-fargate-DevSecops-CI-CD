@@ -11,6 +11,7 @@ env:
   AWS_REGION: "ap-south-2"
   ImageName: "fastapi/app"
   REPO_NAME: "fastapi/app"
+  ECRREGISTRY: "public.ecr.aws/b6i0w9m5"
 permissions:
   id-token: write
   contents: read
@@ -90,5 +91,5 @@ jobs:
       run: |
         docker tag ${{ env.ImageName }}:latest $ECR_REGISTRY/${{ env.REPO_NAME }}:latest
         docker tag ${{ env.ImageName }}:latest $ECR_REGISTRY/${{ env.REPO_NAME }}:${{ github.sha }}
-        docker push $ECR_REGISTRY/${{ env.REPO_NAME }}:latest
-        docker push $ECR_REGISTRY/${{ env.REPO_NAME }}:${{ github.sha }}
+        docker push ${{ env.ECR_REGISTRY}}/${{ env.REPO_NAME }}:latest
+        docker push ${{ env.ECR_REGISTRY }}/${{ env.REPO_NAME }}:${{ github.sha }}
