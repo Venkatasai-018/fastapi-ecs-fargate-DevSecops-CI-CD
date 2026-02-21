@@ -37,3 +37,9 @@ jobs:
         role-to-assume: ${{ secrets.OIDC_CONNECT }}
         role-session-name: GitHubActions-Backend-${{ github.run_id }}
         aws-region: "ap-south-1"
+    
+    # checking the connection with AWS OIDC
+    - name: Verify AWS OIDC Authentication
+      run: |
+        echo "Verifying AWS OIDC Authentication..."
+        aws sts get-caller-identity
