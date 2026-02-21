@@ -10,7 +10,7 @@ on:
 env:
   AWS_REGION: "ap-south-2"
   ImageName: "fastapi-app"
-  REPO_NAME: "fastapi-app"
+  REPO_NAME: "fastapi/app"
 permissions:
   id-token: write
   contents: read
