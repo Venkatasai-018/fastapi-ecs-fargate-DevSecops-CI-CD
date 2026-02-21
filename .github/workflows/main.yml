@@ -79,19 +79,25 @@ jobs:
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
 
-    # Login to Amazon ECR
-    - name: Login to Amazon ECR
+    # Reconfigure AWS credentials for Public ECR (requires us-east-1)
+    - name: Configure AWS credentials for Public ECR
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ secrets.OIDC_CONNECT }}
+        role-session-name: GitHubActions-ECR-${{ github.run_id }}
+        aws-region: us-east-1
+
+    # Login to Amazon ECR Public
+    - name: Login to Amazon ECR Public
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
+      with:
+        registry-type: public
 
     # Tag and Push to ECR
     - name: Push Docker Image to ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       run: |
-        # docker tag ${{ env.ImageName }}:latest ${{ env.ECR_REGISTRY}}/${{ env.REPO_NAME }}:latest
-        # docker tag ${{ env.ImageName }}:latest ${{ env.ECR_REGISTRY}}/${{ env.REPO_NAME }}:${{ github.sha }}
-        # docker push ${{ env.ECR_REGISTRY}}/${{ env.REPO_NAME }}:latest
-        # docker push ${{ env.ECR_REGISTRY }}/${{ env.REPO_NAME }}:${{ github.sha }}
-        docker tag fastapi/app:latest public.ecr.aws/b6i0w9m5/fastapi/app:latest
-        docker push public.ecr.aws/b6i0w9m5/fastapi/app:latest
+        docker tag ${{ env.ImageName }}:latest ${{ env.ECRREGISTRY }}/${{ env.REPO_NAME }}:latest
+        docker tag ${{ env.ImageName }}:latest ${{ env.ECRREGISTRY }}/${{ env.REPO_NAME }}:${{ github.sha }}
+        docker push ${{ env.ECRREGISTRY }}/${{ env.REPO_NAME }}:latest
+        docker push ${{ env.ECRREGISTRY }}/${{ env.REPO_NAME }}:${{ github.sha }}
