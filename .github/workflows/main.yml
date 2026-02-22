@@ -3,8 +3,8 @@ name: FastAPI ECR PUSH ECS + FARGATE DEPLOY
 on:
   push:
     branches: [ main ,develop,release,feature/*]
-  folder:
-    - "fastapi-app/**"
+    paths:
+      - "fastapi-app/**"
   workflow_dispatch:  # Allows manual triggering of the workflow from the GitHub Actions tab
 
 

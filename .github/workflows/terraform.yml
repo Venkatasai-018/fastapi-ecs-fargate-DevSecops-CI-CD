@@ -7,7 +7,7 @@ on:
       - develop 
       - release
       - feature/*
-    folder:
+    paths:
       - terraform/**
   workflow_dispatch:
 
