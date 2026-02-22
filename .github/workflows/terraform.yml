@@ -9,6 +9,7 @@ on:
       - feature/*
     paths:
       - terraform/**
+      - .github/workflows/terraform.yml
   workflow_dispatch:
 
 # OIDC permissions for keyless authentication
