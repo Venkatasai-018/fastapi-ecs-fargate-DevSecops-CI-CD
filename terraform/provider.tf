@@ -1,15 +1,15 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "6.33.0"
     }
   }
   backend "s3" {
-    bucket = "not-bucket-123"
-    key    = "terraform.tfstate"
-    region = "ap-south-2"
-    encrypt = true
+    bucket       = "not-bucket-123"
+    key          = "terraform.tfstate"
+    region       = "ap-south-2"
+    encrypt      = true
     use_lockfile = true
   }
 }
