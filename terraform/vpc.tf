@@ -7,7 +7,7 @@ resource "aws_vpc" "fvpc" {
 
 resource "aws_subnet" "fsubnet1" {
   vpc_id                  = aws_vpc.fvpc.id
-  cidr_block              = "10.0.0.1/16"
+  cidr_block              = "10.0.1.0/24"
   availability_zone       = "ap-south-2a"
   map_public_ip_on_launch = true
   tags = {
@@ -17,7 +17,7 @@ resource "aws_subnet" "fsubnet1" {
 
 resource "aws_subnet" "fsubnet2" {
   vpc_id                  = aws_vpc.fvpc.id
-  cidr_block              = "10.0.0.2/16"
+  cidr_block              = "10.0.2.0/24"
   availability_zone       = "ap-south-2b"
   map_public_ip_on_launch = true
   tags = {
