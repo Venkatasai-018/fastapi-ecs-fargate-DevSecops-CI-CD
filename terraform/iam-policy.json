@@ -1,0 +1,21 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:Describe*",
+                "ecs:List*",
+                "ecs:Describe*",
+                "ecr:Get*",
+                "ecr:List*",
+                "iam:List*",
+                "iam:Get*",
+                "logs:Describe*",
+                "logs:Get*",
+                "logs:List*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}

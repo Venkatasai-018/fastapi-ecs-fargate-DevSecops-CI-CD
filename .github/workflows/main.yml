@@ -1,0 +1,105 @@
+name: FastAPI ECR PUSH ECS + FARGATE DEPLOY
+
+on:
+  push:
+    branches: [ main ,develop,release,feature/*]
+    paths:
+      - "fastapi-app/**"
+  workflow_dispatch:  # Allows manual triggering of the workflow from the GitHub Actions tab
+
+
+# OIDC permissions for keyless authentication
+env:
+  AWS_REGION: "ap-south-2"
+  ImageName: "fastapi/app"
+  REPO_NAME: "fastapi/app"
+  ECRREGISTRY: "public.ecr.aws/b6i0w9m5"
+permissions:
+  id-token: write
+  contents: read
+
+
+
+jobs:
+  lintchecking:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install linting dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8
+
+    - name: Run flake8 linter
+      run: |
+        flake8 fastapi-app/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 fastapi-app/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  Build_and_Push:
+    runs-on: ubuntu-latest
+    needs: lintchecking
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+
+    # OIDC/IRSA Authentication - No more access keys!
+    - name: Configure AWS credentials via OIDC
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ secrets.OIDC_CONNECT }}
+        role-session-name: GitHubActions-Backend-${{ github.run_id }}
+        aws-region: "ap-south-2"
+    
+    # checking the connection with AWS OIDC
+    - name: Verify AWS OIDC Authentication
+      run: |
+        echo "Verifying AWS OIDC Authentication..."
+        aws sts get-caller-identity
+    
+    # Build and push Docker image
+    - name: Build Docker Image
+      run: |
+        docker build -t ${{ env.ImageName }}:latest .
+
+    # Scan image with Trivy before pushing
+    - name: Scan Docker image with Trivy
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.ImageName }}:latest
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
+
+    # Reconfigure AWS credentials for Public ECR (requires us-east-1)
+    - name: Configure AWS credentials for Public ECR
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ secrets.OIDC_CONNECT }}
+        role-session-name: GitHubActions-ECR-${{ github.run_id }}
+        aws-region: us-east-1
+
+    # Login to Amazon ECR Public
+    - name: Login to Amazon ECR Public
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+      with:
+        registry-type: public
+
+    # Tag and Push to ECR
+    - name: Push Docker Image to ECR
+      run: |
+        docker tag ${{ env.ImageName }}:latest ${{ env.ECRREGISTRY }}/${{ env.REPO_NAME }}:latest
+        docker tag ${{ env.ImageName }}:latest ${{ env.ECRREGISTRY }}/${{ env.REPO_NAME }}:${{ github.sha }}
+        docker push ${{ env.ECRREGISTRY }}/${{ env.REPO_NAME }}:latest
+        docker push ${{ env.ECRREGISTRY }}/${{ env.REPO_NAME }}:${{ github.sha }}
